@@ -1,17 +1,36 @@
 # keyboard_teleop_twist
-Classic WASD controls for/in ROS
+---_Made by: Suyash Verma (MrCrazyUnknown)_
+## Classic WASD controls for/in ROS
 
 
-This pakcage is for controlling a robot(ROS) (on ground)
+This package is meant for controlling a robot(ROS) (on ground) using keyboard
 
-This supports classic WASD controls.
+---
+### Features:
+
+- It supports _classic **WASD**_ controls (ROS kinetic/melodic/noetic).
+
+- **_W/S_** are for _moving_ **forwards** & **backwards** respectively
+
+- **_A/D_** are for ~~moving~~ _rotating_ **left** and **right** respectively
+
+- **_T/G_** are for **increasing** and **decreasing** _linear_ speed respectively
+
+- **_Y/H_** are for **increasing** and **decreasing** _angular_ speed respectively
+
+---
 
 
-W/S are for moving forward and backward respectively
+### Usage:
 
-A/D are for rotating (NOT moving) sideways left and right respectively
-
-
-T/G are for increasing and decreasing linear speed
-
-Y/H are for increasing and decreasing angular speed
+- First install the package:
+    ```linux shell
+    cd <workspace>/src
+    git clone https://github.com/MrCrazyUnknown/keyboard_teleop_twist.git
+    ```
+    
+- Next use it: (Only after launching your Gazebo world) (The robot to be controlled should subscribe to /cmd_vel (twist))
+    ```linux shell
+    rosrun keyboard_twist_teleop teleop.py
+    ```
+---

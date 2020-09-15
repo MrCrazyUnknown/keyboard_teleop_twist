@@ -5,6 +5,14 @@ import curses
 import rospy
 from geometry_msgs.msg import Twist
 
+flags = {}
+flags[KeyCode(char = 'w')] = 0
+flags[KeyCode(char = 'a')] = 0
+flags[KeyCode(char = 's')] = 0
+flags[KeyCode(char = 'd')] = 0
+flags[KeyCode(char = 'q')] = 0
+flags[KeyCode(char = 'e')] = 0
+
 
 class Main:
     def __init__(self):
@@ -22,7 +30,6 @@ class Main:
         self.cmd_count = 0
         self.pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
         rospy.init_node('teleop', anonymous=True)
-        self.flag = [0, 0, 0, 0]
         self.msg = Twist()
         self.screen = curses.initscr()
         self.screen_clear()
@@ -67,14 +74,8 @@ class Main:
         try:
             if rospy.is_shutdown():
                 exit(0)
-            if key == KeyCode(char = 'w'):
-                self.flag[0] = 1
-            elif key == KeyCode(char = 'a'):
-                self.flag[1] = 1
-            elif key == KeyCode(char = 's'):
-                self.flag[2] = 1
-            elif key == KeyCode(char = 'd'):
-                self.flag[3] = 1
+            if key in flags:
+                flags[key] = 1
             self.move()
         except rospy.ROSInterruptException as e:
             print(e)
@@ -83,22 +84,16 @@ class Main:
         try:
             if rospy.is_shutdown():
                 exit(0)
-            if key == KeyCode(char = 'w'):
-                self.flag[0] = 0
-            elif key == KeyCode(char = 'a'):
-                self.flag[1] = 0
-            elif key == KeyCode(char = 's'):
-                self.flag[2] = 0
-            elif key == KeyCode(char = 'd'):
-                self.flag[3] = 0
+            if key in flags:
+                flags[key] = 0
             elif key == KeyCode(char = 't'):
-                self.change_speed(incr=True)
+                self.change_speed(True)
             elif key == KeyCode(char = 'g'):
-                self.change_speed(incr=False)
+                self.change_speed(False)
             elif key == KeyCode(char = 'y'):
-                self.change_rot(incr=True)
+                self.change_rot(True)
             elif key == KeyCode(char = 'h'):
-                self.change_rot(incr=False)
+                self.change_rot(False)
             if key == Key.esc:
                 curses.nocbreak()
                 self.screen.keypad(False)
@@ -114,8 +109,8 @@ class Main:
     def move(self):
         if(self.screen.getmaxyx()[0] <= self.cmd_count):
             self.screen_clear()
-        self.msg.linear.x = (self.flag[0] - self.flag[2]) * self.speed
-        self.msg.angular.z = (self.flag[1] - self.flag[3]) * self.rot
+        self.msg.linear.x = (flags[KeyCode(char = 'w')] - flags[KeyCode(char = 's')]) * self.speed
+        self.msg.angular.z = (flags[KeyCode(char = 'a')] - flags[KeyCode(char = 'd')]) * self.rot
         self.pub.publish(self.msg)
         text = "linear x:" + str(round(self.msg.linear.x, 2))
         text += ", y:" + str(round(self.msg.linear.y, 2))

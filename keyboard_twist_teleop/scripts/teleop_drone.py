@@ -121,7 +121,7 @@ class Main:
         text += ", z:" + str(round(self.msg.linear.z, 2))
         text += "  angular x:" + str(round(self.msg.angular.x, 2))
         text += ", y:" + str(round(self.msg.angular.y, 2))
-        text += ", z:" + str((self.msg.angular.z, 2))
+        text += ", z:" + str(round(self.msg.angular.z, 2))
         self.screen.addstr(self.cmd_count, 0, text)
         self.screen.refresh()
         self.cmd_count += 1

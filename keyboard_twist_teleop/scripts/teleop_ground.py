@@ -5,14 +5,6 @@ import curses
 import rospy
 from geometry_msgs.msg import Twist
 
-flags = {}
-flags[KeyCode(char = 'w')] = 0
-flags[KeyCode(char = 'a')] = 0
-flags[KeyCode(char = 's')] = 0
-flags[KeyCode(char = 'd')] = 0
-flags[KeyCode(char = 'q')] = 0
-flags[KeyCode(char = 'e')] = 0
-
 
 class Main:
     def __init__(self):
@@ -25,12 +17,19 @@ class Main:
         And, use 'Y' to increase and 'H' to decrease angular speed
         (Don't use Ctrl+C to exit. Use Esc. (If did ....close the current terminal tab and start a new one))
 ------------------------------------------------------------------------------------------------------------\n"""
-        self.speed = 0.3
-        self.rot = 3
+        self.speed = 10
+        self.rot = 10
         self.cmd_count = 0
         self.pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
         rospy.init_node('teleop', anonymous=True)
         self.msg = Twist()
+        self.flags = {}
+        self.flags[KeyCode(char = 'w')] = 0
+        self.flags[KeyCode(char = 'a')] = 0
+        self.flags[KeyCode(char = 's')] = 0
+        self.flags[KeyCode(char = 'd')] = 0
+        self.flags[KeyCode(char = 'q')] = 0
+        self.flags[KeyCode(char = 'e')] = 0
         self.screen = curses.initscr()
         self.screen_clear()
         self.screen.refresh()
@@ -74,8 +73,8 @@ class Main:
         try:
             if rospy.is_shutdown():
                 exit(0)
-            if key in flags:
-                flags[key] = 1
+            if key in self.flags:
+                self.flags[key] = 1
             self.move()
         except rospy.ROSInterruptException as e:
             print(e)
@@ -84,8 +83,8 @@ class Main:
         try:
             if rospy.is_shutdown():
                 exit(0)
-            if key in flags:
-                flags[key] = 0
+            if key in self.flags:
+                self.flags[key] = 0
             elif key == KeyCode(char = 't'):
                 self.change_speed(True)
             elif key == KeyCode(char = 'g'):
@@ -95,6 +94,7 @@ class Main:
             elif key == KeyCode(char = 'h'):
                 self.change_rot(False)
             if key == Key.esc:
+                self.flags = dict.fromkeys(self.flags.iterkeys(), 0)
                 curses.nocbreak()
                 self.screen.keypad(False)
                 self.screen_clear()
@@ -109,8 +109,8 @@ class Main:
     def move(self):
         if(self.screen.getmaxyx()[0] <= self.cmd_count):
             self.screen_clear()
-        self.msg.linear.x = (flags[KeyCode(char = 'w')] - flags[KeyCode(char = 's')]) * self.speed
-        self.msg.angular.z = (flags[KeyCode(char = 'a')] - flags[KeyCode(char = 'd')]) * self.rot
+        self.msg.linear.x = (self.flags[KeyCode(char = 'w')] - self.flags[KeyCode(char = 's')]) * self.speed
+        self.msg.angular.z = (self.flags[KeyCode(char = 'a')] - self.flags[KeyCode(char = 'd')]) * self.rot
         self.pub.publish(self.msg)
         text = "linear x:" + str(round(self.msg.linear.x, 2))
         text += ", y:" + str(round(self.msg.linear.y, 2))

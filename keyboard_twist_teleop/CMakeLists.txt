@@ -5,13 +5,12 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
 )
 
-catkin_package(
-)
+catkin_package(DEPENDS)
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-catkin_install_python(PROGRAMS scripts/teleop.py
+catkin_install_python(PROGRAMS scripts/teleop_ground.py scripts teleop_drone.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

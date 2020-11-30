@@ -11,6 +11,6 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-catkin_install_python(PROGRAMS scripts/teleop_ground.py scripts teleop_drone.py
+catkin_install_python(PROGRAMS scripts/teleop_ground.py scripts/teleop_drone.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

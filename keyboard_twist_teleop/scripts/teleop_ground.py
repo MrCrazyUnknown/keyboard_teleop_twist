@@ -1,4 +1,4 @@
-is shit#!/usr/bin/env python
+#!/usr/bin/env python
 
 from pynput.keyboard import Key, Listener, KeyCode
 import curses
